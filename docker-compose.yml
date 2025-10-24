@@ -1,22 +1,23 @@
 version: "3.8"
+
 services:
   edge-functions:
-    image: denoland/deno:latest
+    image: denoland/deno:1.45.4
+    container_name: supabase-edge-functions
     working_dir: /app
     volumes:
-      - ./supabase/functions:/app/functions
+      - ./functions:/app/functions:ro
     command: >
-      deno run --allow-net --allow-env --allow-read /app/functions/hello/index.ts
+      sh -c "deno run --allow-net --allow-env --allow-read /app/functions/hello/index.ts"
     ports:
-      - "54322:8000"
+      - "54322:8000"            # mapeia para 54322 no host (evita conflito com 8000 do Coolify)
     environment:
-      SUPABASE_URL: http://supabasekong-a8sgkowssok00os84o8g8o8s.74.235.163.40.sslip.io:8000
-      SUPABASE_ANON_KEY: ${SUPABASE_ANON_KEY}
-      SUPABASE_SERVICE_ROLE_KEY: ${SUPABASE_SERVICE_ROLE_KEY}
+      SUPABASE_URL: http://supabasekong-a8sgkowssok00os84o8g8o8s.74.235.163.40.sslip.io:8000   # <- substitua pela URL pública do seu Supabase no Coolify
+      SUPABASE_ANON_KEY: "${SUPABASE_ANON_KEY}"
+      SUPABASE_SERVICE_ROLE_KEY: "${SUPABASE_SERVICE_ROLE_KEY}"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/ || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
 
-
-healthcheck:
-  test: ["CMD", "curl", "-f", "http://localhost:8000"]
-  interval: 30s
-  timeout: 5s
-  retries: 3

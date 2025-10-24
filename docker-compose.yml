@@ -10,6 +10,13 @@ services:
     ports:
       - "54322:8000"
     environment:
-      SUPABASE_URL: http://supabase:8000
+      SUPABASE_URL: http://supabasekong-a8sgkowssok00os84o8g8o8s.74.235.163.40.sslip.io:8000
       SUPABASE_ANON_KEY: ${SUPABASE_ANON_KEY}
       SUPABASE_SERVICE_ROLE_KEY: ${SUPABASE_SERVICE_ROLE_KEY}
+
+
+healthcheck:
+  test: ["CMD", "curl", "-f", "http://localhost:8000"]
+  interval: 30s
+  timeout: 5s
+  retries: 3

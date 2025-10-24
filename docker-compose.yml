@@ -1,0 +1,18 @@
+version: "3.8"
+services:
+  supabase:
+    image: supabase/postgres
+    ports:
+      - "8000:8000"
+
+  edge-functions:
+    image: denoland/deno:latest
+    working_dir: /app
+    volumes:
+      - ./supabase/functions:/app/functions
+    command: >
+      deno run --allow-net --allow-env --allow-read /app/functions/hello/index.ts
+    environment:
+      SUPABASE_URL: http://supabase:8000        # ✅ usa o nome do serviço
+      SUPABASE_ANON_KEY: ${SUPABASE_ANON_KEY}
+      SUPABASE_SERVICE_ROLE_KEY: ${SUPABASE_SERVICE_ROLE_KEY}
